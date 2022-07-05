@@ -48,6 +48,7 @@ axios.post('https://jsonplaceholder.typicode.com/todos' , {
 }
 
   // PUT/PATCH REQUEST
+// Put will replace the entire DATA BLOCk - Patch will only update the specified params
   function updateTodo() {
     axios.patch('https://jsonplaceholder.typicode.com/todos/1' , {
         title: "Updated Todo",
@@ -59,12 +60,19 @@ axios.post('https://jsonplaceholder.typicode.com/todos' , {
   
   // DELETE REQUEST
   function removeTodo() {
-    console.log('DELETE Request');
+    axios.delete('https://jsonplaceholder.typicode.com/todos/1')
+.then(res => showOutput(res))
+.catch(err => console.error(err))
   }
   
   // SIMULTANEOUS DATA
   function getData() {
-    console.log('Simultaneous Request');
+    axios.all([
+        axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5'),
+        axios.get('https://jsonplaceholder.typicode.com/posts?_limit=5')
+    ])
+    .then(axios.spread((todos, posts) => showOutput(posts)))
+    .catch(err => console.error(err));
   }
   
   // CUSTOM HEADERS
@@ -88,6 +96,19 @@ axios.post('https://jsonplaceholder.typicode.com/todos' , {
   }
   
   // INTERCEPTING REQUESTS & RESPONSES
+  axios.interceptors.request.use(
+    config => {
+      console.log(
+        `${config.method.toUpperCase()} request sent to ${config.url}`
+      );
+  
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+  );
+  
   
   // AXIOS INSTANCES
   
